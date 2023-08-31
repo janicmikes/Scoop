@@ -145,9 +145,14 @@ function format($str, $hash) {
     $executionContext.invokeCommand.expandString($str)
 }
 function is_admin {
-    $admin = [security.principal.windowsbuiltinrole]::administrator
-    $id = [security.principal.windowsidentity]::getcurrent()
-    ([security.principal.windowsprincipal]($id)).isinrole($admin)
+    $currentUserName = [security.principal.windowsidentity]::getcurrent().Name
+    # TODO: actually check if user has write access (use correct FileSystemRights)
+    $permission = (Get-Acl $globaldir).Access | ?{$_.IdentityReference -eq $currentUserName -and $_.FieSystemRights -in ("FullControl", "WriteData")} | Select IdentityReference,FileSystemRights
+    
+    if ($permission) {
+        return $true;
+    }
+    return $false;
 }
 
 # messages
