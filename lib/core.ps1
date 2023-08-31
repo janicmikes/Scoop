@@ -147,7 +147,7 @@ function format($str, $hash) {
 function is_admin {
     $currentUserName = [security.principal.windowsidentity]::getcurrent().Name
     # TODO: actually check if user has write access (use correct FileSystemRights)
-    $permission = (Get-Acl $globaldir).Access | ?{$_.IdentityReference -eq $currentUserName -and $_.FieSystemRights -in ("FullControl", "WriteData")} | Select IdentityReference,FileSystemRights
+    $permission = (Get-Acl $globaldir).Access | ?{$_.IdentityReference -eq $currentUserName -and $_.FileSystemRights -in ("FullControl", "WriteData")} | Select IdentityReference,FileSystemRights
     
     if ($permission) {
         return $true;
