@@ -17,9 +17,8 @@ param(
 . "$PSScriptRoot\..\lib\versions.ps1"
 . "$PSScriptRoot\..\lib\manifest.ps1"
 
-if ($global -and !(is_admin)) {
-    error 'You need admin rights to uninstall globally.'
-    exit 1
+if ($global -and !(is_global_allowed)) {
+    abort 'You need write access on the global scoop directory to uninstall globally.'
 }
 
 if ($purge) {

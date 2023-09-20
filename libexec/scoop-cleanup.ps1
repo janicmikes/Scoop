@@ -23,8 +23,8 @@ $all = $opt.a -or $opt.all
 
 if (!$apps -and !$all) { 'ERROR: <app> missing'; my_usage; exit 1 }
 
-if ($global -and !(is_admin)) {
-    'ERROR: you need admin rights to cleanup global apps'; exit 1
+if ($global -and !(is_global_allowed)) {
+    abort 'ERROR: you need write access on the global scoop directory to cleanup global apps'
 }
 
 function cleanup($app, $global, $verbose, $cache) {

@@ -24,9 +24,8 @@ if (!$apps) {
     exit 1
 }
 
-if ($global -and !(is_admin)) {
-    error 'You need admin rights to hold a global app.'
-    exit 1
+if ($global -and !(is_global_allowed)) {
+    abort 'You need write access on the global scoop directory to hold a global app.'
 }
 
 $apps | ForEach-Object {

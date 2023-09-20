@@ -20,10 +20,10 @@ function create_startmenu_shortcuts($manifest, $dir, $global, $arch) {
 }
 
 function shortcut_folder($global) {
-    if ($global) {
+    $startmenu = 'StartMenu'
+
+    if ($global -and (is_admin)) {
         $startmenu = 'CommonStartMenu'
-    } else {
-        $startmenu = 'StartMenu'
     }
     return Convert-Path (ensure ([System.IO.Path]::Combine([Environment]::GetFolderPath($startmenu), 'Programs', 'Scoop Apps')))
 }

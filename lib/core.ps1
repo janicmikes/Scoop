@@ -149,6 +149,17 @@ function is_admin {
     $id = [security.principal.windowsidentity]::getcurrent()
     ([security.principal.windowsprincipal]($id)).isinrole($admin)
 }
+function is_global_allowed {
+    $currentUserName = [security.principal.windowsidentity]::getcurrent().Name
+    # TODO: check also if user has access through groups eg. the default Users Group: 'S-1-5-32-545'
+    # TODO: actually check if user has write access (use correct FileSystemRights)
+    $permission = (Get-Acl $globaldir).Access | ?{$_.IdentityReference -eq $currentUserName -and $_.AccessControlType -eq "Allow" -and $_.FileSystemRights -in ("FullControl", "WriteData", "Write")} | Select IdentityReference,FileSystemRights
+
+    if ($permission) {
+        return $true;
+    }
+    return $false;
+}
 
 # messages
 function abort($msg, [int] $exit_code=1) { write-host $msg -f red; exit $exit_code }
@@ -589,7 +600,8 @@ function Invoke-ExternalCommand {
 }
 
 function env($name,$global,$val='__get') {
-    $target = 'User'; if($global) {$target = 'Machine'}
+    # Fallback to user scope if current user is not an admin
+    $target = 'User'; if($global -and (is_admin)) {$target = 'Machine'}
     if($val -eq '__get') { [environment]::getEnvironmentVariable($name,$target) }
     else { [environment]::setEnvironmentVariable($name,$val,$target) }
 }

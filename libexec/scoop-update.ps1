@@ -106,7 +106,7 @@ function update_scoop($show_update_log) {
                 warn "Uncommitted changes detected. Stashing..."
                 git -C "$currentdir" stash push -m "WIP at $([System.DateTime]::Now.ToString('o'))" -u -q
             } else {
-                warn "Uncommitted changes detected. Update aborted."
+                warn "Uncommitted changes detected in $currentdir. Update aborted."
                 return
             }
         }
@@ -326,8 +326,8 @@ if (-not ($apps -or $all)) {
     set_config LAST_UPDATE ([System.DateTime]::Now.ToString('o')) | Out-Null
     success 'Scoop was updated successfully!'
 } else {
-    if ($global -and !(is_admin)) {
-        'ERROR: You need admin rights to update global apps.'; exit 1
+    if ($global -and !(is_global_allowed)) {
+        abort 'ERROR: You need write access on the global scoop directory to update global apps.'
     }
 
     $outdated = @()

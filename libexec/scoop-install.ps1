@@ -48,8 +48,12 @@ try {
 
 if (!$apps) { error '<app> missing'; my_usage; exit 1 }
 
-if ($global -and !(is_admin)) {
-    abort 'ERROR: you need admin rights to install global apps'
+if ($global -and !(is_global_allowed)) {
+    abort 'ERROR: you need write access on the global scoop directory to install global apps'
+}
+
+if($global -and !(is_admin)) {
+    warn "You are missing admin permissions. Shortcuts will be installed for the current user only."
 }
 
 if (is_scoop_outdated) {

@@ -56,9 +56,13 @@ $apps | ForEach-Object {
         return
     }
 
-    if($global -and !(is_admin)) {
-        warn "'$app' ($version) is a global app. You need admin rights to reset it. Skipping."
+    if($global -and !(is_global_allowed)) {
+        warn "'$app' ($version) is a global app. You need write access on the global scoop directory to reset it. Skipping."
         return
+    }
+
+    if($global -and !(is_admin)) {
+        warn "You are missing admin permissions. Some features will apply to current user only (Path, Start Menu)."
     }
 
     write-host "Resetting $app ($version)."
